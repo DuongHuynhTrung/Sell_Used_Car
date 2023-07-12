@@ -1,12 +1,19 @@
-import { Entity, Column, BeforeInsert, ObjectIdColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  BeforeInsert,
+  ObjectIdColumn,
+  OneToMany,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { RoleEnum } from '../enum/role.enum';
 import { ObjectId } from 'mongodb';
+import { Car } from 'src/car/entities/car.entity';
 
 @Entity()
 export class User {
   @ObjectIdColumn()
-  id: ObjectId;
+  _id: ObjectId;
 
   @Column({ nullable: false })
   fullName: string;
@@ -37,6 +44,9 @@ export class User {
 
   @Column({ nullable: false, default: RoleEnum.CUSTOMER })
   role: RoleEnum;
+
+  @OneToMany(() => Car, (car) => car.user, { eager: false })
+  cars: Car[];
 
   @BeforeInsert()
   async hashPasword() {

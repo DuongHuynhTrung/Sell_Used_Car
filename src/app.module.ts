@@ -4,6 +4,8 @@ import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CarModule } from './car/car.module';
+import { Car } from './car/entities/car.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -17,13 +19,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         url: configService.get('DB_URI'),
         useNewUrlParser: true,
         logging: true,
-        entities: [User],
+        entities: [User, Car],
         synchronize: true,
         autoLoadEntities: true,
       }),
     }),
     AuthModule,
     UserModule,
+    CarModule,
   ],
 })
 export class AppModule {}

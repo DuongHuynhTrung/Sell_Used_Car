@@ -23,6 +23,10 @@ export class SignUpDto {
   @IsNotEmpty()
   address: string;
 
+  @IsString()
+  @IsNotEmpty()
+  gender: string;
+
   @IsNumberString()
   @IsNotEmpty()
   phone: string;

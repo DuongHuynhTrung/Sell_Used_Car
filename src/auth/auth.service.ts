@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import * as bcrypt from 'bcrypt';
@@ -18,17 +18,15 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: MongoRepository<User>,
     private jwtService: JwtService,
   ) {}
   async signUp(signUpDto: SignUpDto) {
+    const user = this.userRepository.create(signUpDto);
+    if (!user) {
+      throw new BadRequestException('Something went wrong when creating user');
+    }
     try {
-      const user = this.userRepository.create(signUpDto);
-      if (!user) {
-        throw new BadRequestException(
-          'Something went wrong when creating user',
-        );
-      }
       await this.userRepository.save(user);
       return user;
     } catch (error) {
