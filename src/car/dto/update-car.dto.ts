@@ -1,51 +1,51 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsOptional, IsNumber, IsString } from 'class-validator';
 
 export class UpdateCarDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   name: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   autoMaker: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   model: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   category: string;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   minPrice: number;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   maxPrice: number;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   fuel: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   transmission: string;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   yearOfManufacture: number;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   otherFacilities: number[];
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   images: string[];
 }

@@ -1,3 +1,4 @@
+import { Car } from './entities/car.entity';
 import {
   Controller,
   Get,
@@ -10,26 +11,85 @@ import {
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+  ApiCreatedResponse,
+  ApiBadRequestResponse,
+  ApiInternalServerErrorResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('Car')
 @Controller('cars')
 export class CarController {
   constructor(private readonly carService: CarService) {}
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Sign Up new Car' })
+  @ApiCreatedResponse({
+    description: 'Created Car object as response',
+    type: Car,
+  })
+  @ApiBadRequestResponse({
+    description: 'The license plate was already created.',
+  })
+  @ApiNotFoundResponse({
+    description: 'User id not found.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
   @Post()
   create(@Body() createCarDto: CreateCarDto) {
     return this.carService.create(createCarDto);
   }
 
+  @ApiOperation({ summary: 'Get all Car' })
+  @ApiOkResponse({
+    description: 'The car has been successfully retrieved.',
+    type: [Car],
+  })
+  @ApiNotFoundResponse({
+    description: 'No cars found in the repository.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
   @Get()
   findAll() {
     return this.carService.findAll();
   }
 
+  @ApiOperation({ summary: 'Get a car by License Plate' })
+  @ApiOkResponse({
+    description: 'The car has been successfully retrieved.',
+    type: [Car],
+  })
+  @ApiNotFoundResponse({
+    description: 'Car not found.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
   @Get(':licensePlate')
   findOne(@Param('licensePlate') licensePlate: string) {
     return this.carService.findOne(licensePlate);
   }
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update Car by License Plate' })
+  @ApiOkResponse({
+    description: 'Update Car Successfully.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Car not found.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
   @Patch(':licensePlate')
   update(
     @Param('licensePlate') licensePlate: string,
@@ -38,6 +98,17 @@ export class CarController {
     return this.carService.update(licensePlate, updateCarDto);
   }
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete Car by License Plate' })
+  @ApiOkResponse({
+    description: 'Delete Car Successfully.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Car not found.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
   @Delete(':licensePlate')
   remove(@Param('licensePlate') licensePlate: string) {
     return this.carService.remove(licensePlate);

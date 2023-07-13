@@ -1,6 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { User } from 'src/user/entities/user.entity';
-
+import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class CreateCarDto {
   @IsString()
   @IsNotEmpty()
@@ -46,11 +44,11 @@ export class CreateCarDto {
   @IsNotEmpty()
   yearOfManufacture: number;
 
-  @IsNumber()
+  @IsArray()
   @IsNotEmpty()
   otherFacilities: number[];
 
-  @IsString()
+  @IsArray()
   @IsNotEmpty()
   images: string[];
 

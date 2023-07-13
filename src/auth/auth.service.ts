@@ -26,6 +26,7 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException('Something went wrong when creating user');
     }
+    user.status = true;
     try {
       await this.userRepository.save(user);
       return user;

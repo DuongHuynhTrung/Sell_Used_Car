@@ -31,14 +31,16 @@ export class CarService {
     }
     const car = this.carRepository.create(createCarDto);
     if (!car) {
-      throw new BadRequestException('Something went wrong when creating car');
+      throw new InternalServerErrorException(
+        'Something went wrong when creating car',
+      );
     }
 
     const user = await this.userRepository.findOneBy({
       _id: new ObjectId(createCarDto.userId),
     });
     if (!user) {
-      throw new InternalServerErrorException(
+      throw new NotFoundException(
         `User with id ${createCarDto.userId} does not exist`,
       );
     }
