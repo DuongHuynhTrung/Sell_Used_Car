@@ -6,6 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CarModule } from './car/car.module';
 import { Car } from './car/entities/car.entity';
+import { SlotModule } from './slot/slot.module';
+import { RolesGuard } from './auth/role.guard';
+import { APP_GUARD } from '@nestjs/core';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,6 +30,7 @@ import { Car } from './car/entities/car.entity';
     AuthModule,
     UserModule,
     CarModule,
+    SlotModule,
   ],
 })
 export class AppModule {}

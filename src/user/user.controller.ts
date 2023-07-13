@@ -1,3 +1,4 @@
+import { Roles } from './../auth/role.decorator';
 import {
   Controller,
   Get,
@@ -19,6 +20,8 @@ import {
   ApiNotFoundResponse,
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
+import { RoleEnum } from './enum/role.enum';
+import { RolesGuard } from 'src/auth/role.guard';
 
 @UseGuards(JwtGuard)
 @ApiTags('User')
@@ -38,6 +41,8 @@ export class UserController {
   @ApiInternalServerErrorResponse({
     description: 'Internal server error.',
   })
+  @UseGuards(RolesGuard)
+  @Roles(RoleEnum.MANAGER)
   @Get()
   findAll(): Promise<User[]> {
     return this.userService.getUsers();
@@ -87,6 +92,8 @@ export class UserController {
   @ApiInternalServerErrorResponse({
     description: 'Internal server error.',
   })
+  @UseGuards(RolesGuard)
+  @Roles(RoleEnum.MANAGER)
   @Delete(':email')
   remove(@Param('email') email: string): Promise<string> {
     return this.userService.deleteUser(email);

@@ -103,7 +103,7 @@ export class User {
   @Column({ nullable: false, default: RoleEnum.CUSTOMER })
   role: RoleEnum;
 
-  @OneToMany(() => Car, (car) => car.user, { eager: false })
+  @OneToMany(() => Car, (car) => car.user, { eager: true })
   cars: Car[];
 
   @BeforeInsert()

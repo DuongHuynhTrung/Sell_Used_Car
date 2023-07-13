@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -21,8 +22,14 @@ import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
+import { JwtGuard } from 'src/auth/jwt.guard';
+import { RolesGuard } from 'src/auth/role.guard';
+import { Roles } from 'src/auth/role.decorator';
+import { RoleEnum } from 'src/user/enum/role.enum';
 
 @ApiTags('Car')
+@UseGuards(JwtGuard, RolesGuard)
+@Roles(RoleEnum.OWNER)
 @Controller('cars')
 export class CarController {
   constructor(private readonly carService: CarService) {}
