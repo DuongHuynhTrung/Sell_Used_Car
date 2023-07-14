@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Car } from 'src/car/entities/car.entity';
-import { Column, ManyToOne, ObjectId, ObjectIdColumn } from 'typeorm';
+import { Column, ManyToOne, ObjectIdColumn } from 'typeorm';
 import { SlotEnum } from '../enum/slot.enum';
+import { ObjectId } from 'mongodb';
 
 export class Slot {
   @ApiProperty({

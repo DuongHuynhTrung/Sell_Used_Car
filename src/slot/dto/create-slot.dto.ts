@@ -8,7 +8,7 @@ export class CreateSlotDto {
 
   @IsArray()
   @IsNotEmpty()
-  slotStored: SlotEnum[];
+  slot: SlotEnum;
 
   @IsString()
   @IsNotEmpty()

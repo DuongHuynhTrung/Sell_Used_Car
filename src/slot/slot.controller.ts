@@ -6,10 +6,10 @@ import { CreateSlotDto } from './dto/create-slot.dto';
 export class SlotController {
   constructor(private readonly slotService: SlotService) {}
 
-  @Post()
-  create(@Body() createSlotDto: CreateSlotDto) {
-    return this.slotService.create(createSlotDto);
-  }
+  // @Post()
+  // create(@Body() createSlotDto: CreateSlotDto) {
+  //   return this.slotService.create(createSlotDto);
+  // }
 
   @Get()
   findAll() {

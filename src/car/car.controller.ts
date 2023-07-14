@@ -28,8 +28,6 @@ import { Roles } from 'src/auth/role.decorator';
 import { RoleEnum } from 'src/user/enum/role.enum';
 
 @ApiTags('Car')
-@UseGuards(JwtGuard, RolesGuard)
-@Roles(RoleEnum.OWNER)
 @Controller('cars')
 export class CarController {
   constructor(private readonly carService: CarService) {}
@@ -49,6 +47,8 @@ export class CarController {
   @ApiInternalServerErrorResponse({
     description: 'Internal server error.',
   })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(RoleEnum.OWNER)
   @Post()
   create(@Body() createCarDto: CreateCarDto) {
     return this.carService.create(createCarDto);
@@ -97,6 +97,8 @@ export class CarController {
   @ApiInternalServerErrorResponse({
     description: 'Internal server error.',
   })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(RoleEnum.OWNER)
   @Patch(':licensePlate')
   update(
     @Param('licensePlate') licensePlate: string,
@@ -116,6 +118,8 @@ export class CarController {
   @ApiInternalServerErrorResponse({
     description: 'Internal server error.',
   })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(RoleEnum.OWNER)
   @Delete(':licensePlate')
   remove(@Param('licensePlate') licensePlate: string) {
     return this.carService.remove(licensePlate);

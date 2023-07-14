@@ -55,11 +55,7 @@ export class CarService {
 
   async findAll(): Promise<Car[]> {
     try {
-      const cars = await this.carRepository.find({
-        relations: {
-          user: true,
-        },
-      });
+      const cars = await this.carRepository.find();
       if (!cars || cars.length === 0) {
         throw new Error(`No cars found`);
       }

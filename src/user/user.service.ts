@@ -18,9 +18,7 @@ export class UserService {
   async getUsers(): Promise<User[]> {
     try {
       const users = await this.userRepository.find({
-        relations: {
-          cars: true,
-        },
+        relations: { cars: true },
       });
       if (!users || users.length === 0) {
         throw new Error(`No users found in the repository`);

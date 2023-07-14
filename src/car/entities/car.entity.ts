@@ -46,6 +46,6 @@ export class Car {
   @Column({ nullable: false })
   images: string[];
 
-  @ManyToOne(() => User, (user) => user.cars, { eager: false })
+  @ManyToOne(() => User, (user) => user.cars)
   user: User;
 }
