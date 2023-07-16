@@ -2,14 +2,14 @@ import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { SlotService } from './slot.service';
 import { CreateSlotDto } from './dto/create-slot.dto';
 
-@Controller('slot')
+@Controller('slots')
 export class SlotController {
   constructor(private readonly slotService: SlotService) {}
 
-  // @Post()
-  // create(@Body() createSlotDto: CreateSlotDto) {
-  //   return this.slotService.create(createSlotDto);
-  // }
+  @Post()
+  create(@Body() createSlotDto: CreateSlotDto) {
+    return this.slotService.create(createSlotDto);
+  }
 
   @Get()
   findAll() {

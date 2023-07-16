@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
-import { MongoRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Car } from './entities/car.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
@@ -16,10 +16,10 @@ import { ObjectId } from 'mongodb';
 export class CarService {
   constructor(
     @InjectRepository(Car)
-    private readonly carRepository: MongoRepository<Car>,
+    private readonly carRepository: Repository<Car>,
 
     @InjectRepository(User)
-    private readonly userRepository: MongoRepository<User>,
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createCarDto: CreateCarDto): Promise<Car> {
@@ -55,10 +55,13 @@ export class CarService {
 
   async findAll(): Promise<Car[]> {
     try {
-      const cars = await this.carRepository.find();
+      const cars = await this.carRepository.find({
+        relations: ['user'],
+      });
       if (!cars || cars.length === 0) {
         throw new Error(`No cars found`);
       }
+      cars.forEach((car) => console.log(car.user));
       return cars;
     } catch (error) {
       throw new NotFoundException(error.message);

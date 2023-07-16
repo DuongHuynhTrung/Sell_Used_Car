@@ -13,6 +13,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import * as bcrypt from 'bcrypt';
 import { PayloadJwtDto } from './dto/payload-jwt.dto';
 import { JwtService } from '@nestjs/jwt';
+import { RoleEnum } from 'src/user/enum/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,9 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
   async signUp(signUpDto: SignUpDto) {
+    if (!signUpDto.role || signUpDto.role === undefined) {
+      signUpDto.role = RoleEnum.USER;
+    }
     const user = this.userRepository.create(signUpDto);
     if (!user) {
       throw new BadRequestException('Something went wrong when creating user');

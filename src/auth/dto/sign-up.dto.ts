@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsBoolean,
   IsDateString,
   IsEmail,
   IsEnum,
   IsNotEmpty,
   IsNumberString,
+  IsOptional,
   IsString,
   IsUrl,
 } from 'class-validator';
@@ -28,7 +28,7 @@ export class SignUpDto {
     nullable: false,
   })
   @IsDateString()
-  @IsNotEmpty()
+  @IsOptional()
   dob: string;
 
   @ApiProperty({
@@ -37,7 +37,7 @@ export class SignUpDto {
     nullable: false,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   address: string;
 
   @ApiProperty({
@@ -46,7 +46,7 @@ export class SignUpDto {
     nullable: false,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   gender: GenderEnum;
 
   @ApiProperty({
@@ -56,7 +56,7 @@ export class SignUpDto {
     uniqueItems: true,
   })
   @IsNumberString()
-  @IsNotEmpty()
+  @IsOptional()
   phone: string;
 
   @ApiProperty({
@@ -84,16 +84,16 @@ export class SignUpDto {
     nullable: false,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @IsUrl()
   imgUrl: string;
 
   @ApiProperty({
-    description: 'Role of account: Customer/Owner/Manager',
-    example: 'Customer',
+    description: 'Role of account: User/Admin',
+    example: 'User',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(RoleEnum)
   role: RoleEnum;
 }

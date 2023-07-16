@@ -48,7 +48,7 @@ export class CarController {
     description: 'Internal server error.',
   })
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles(RoleEnum.OWNER)
+  @Roles(RoleEnum.USER)
   @Post()
   create(@Body() createCarDto: CreateCarDto) {
     return this.carService.create(createCarDto);
@@ -98,7 +98,7 @@ export class CarController {
     description: 'Internal server error.',
   })
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles(RoleEnum.OWNER)
+  @Roles(RoleEnum.USER)
   @Patch(':licensePlate')
   update(
     @Param('licensePlate') licensePlate: string,
@@ -119,7 +119,7 @@ export class CarController {
     description: 'Internal server error.',
   })
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles(RoleEnum.OWNER)
+  @Roles(RoleEnum.USER)
   @Delete(':licensePlate')
   remove(@Param('licensePlate') licensePlate: string) {
     return this.carService.remove(licensePlate);

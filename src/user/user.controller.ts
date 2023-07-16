@@ -42,7 +42,7 @@ export class UserController {
     description: 'Internal server error.',
   })
   @UseGuards(RolesGuard)
-  @Roles(RoleEnum.MANAGER)
+  @Roles(RoleEnum.ADMIN)
   @Get()
   findAll(): Promise<User[]> {
     return this.userService.getUsers();
@@ -93,7 +93,7 @@ export class UserController {
     description: 'Internal server error.',
   })
   @UseGuards(RolesGuard)
-  @Roles(RoleEnum.MANAGER)
+  @Roles(RoleEnum.ADMIN)
   @Delete(':email')
   remove(@Param('email') email: string): Promise<string> {
     return this.userService.deleteUser(email);

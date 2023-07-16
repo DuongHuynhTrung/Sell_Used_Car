@@ -10,6 +10,7 @@ import { SlotModule } from './slot/slot.module';
 import { RolesGuard } from './auth/role.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { Slot } from './slot/entities/slot.entity';
+import { BookingModule } from './booking/booking.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -31,6 +32,7 @@ import { Slot } from './slot/entities/slot.entity';
     UserModule,
     CarModule,
     SlotModule,
+    BookingModule,
   ],
 })
 export class AppModule {}

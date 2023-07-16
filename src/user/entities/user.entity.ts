@@ -97,13 +97,13 @@ export class User {
 
   @ApiProperty({
     description: 'Role of account',
-    example: 'Customer',
+    example: 'User',
     nullable: false,
   })
-  @Column({ nullable: false, default: RoleEnum.CUSTOMER })
+  @Column({ nullable: false, default: RoleEnum.USER })
   role: RoleEnum;
 
-  @OneToMany(() => Car, (cars) => cars.user)
+  @OneToMany((_type) => Car, (cars) => cars.user, { eager: false })
   cars: Car[];
 
   @BeforeInsert()
