@@ -8,6 +8,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseEnumPipe,
 } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -164,10 +165,10 @@ export class CarController {
   })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
-  @Patch('adminConfirm/:licensePlate')
+  @Patch('changeStatus/:licensePlate/:status')
   changeCarStatus(
     @Param('licensePlate') licensePlate: string,
-    @Param('status') status: CarStatusEnum,
+    @Param('status', new ParseEnumPipe(CarStatusEnum)) status: CarStatusEnum,
   ): Promise<Car> {
     return this.carService.changeCarStatus(licensePlate, status);
   }

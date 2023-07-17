@@ -1,5 +1,4 @@
-import { Car } from 'src/car/entities/car.entity';
-import { Column, Entity, ManyToOne, ObjectIdColumn } from 'typeorm';
+import { Column, Entity, ObjectIdColumn } from 'typeorm';
 import { SlotEnum } from '../enum/slot.enum';
 import { ObjectId } from 'mongodb';
 import { ApiProperty } from '@nestjs/swagger';

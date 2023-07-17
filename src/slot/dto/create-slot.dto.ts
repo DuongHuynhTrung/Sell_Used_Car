@@ -1,11 +1,4 @@
-import {
-  IsArray,
-  IsDate,
-  IsDateString,
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { SlotEnum } from '../enum/slot.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
