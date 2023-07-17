@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
@@ -11,16 +12,12 @@ import { Repository } from 'typeorm';
 import { Car } from './entities/car.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
-import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class CarService {
   constructor(
     @InjectRepository(Car)
     private readonly carRepository: Repository<Car>,
-
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createCarDto: CreateCarDto, user: User): Promise<Car> {
@@ -40,7 +37,7 @@ export class CarService {
     if (!user) {
       throw new UnauthorizedException(`User Unauthorized`);
     }
-    car.user = user;
+    car.user_id = user._id;
     try {
       await this.carRepository.save(car);
     } catch (error) {
@@ -52,6 +49,22 @@ export class CarService {
   async findAll(): Promise<Car[]> {
     try {
       const cars = await this.carRepository.find();
+      if (!cars || cars.length === 0) {
+        throw new Error(`No cars found`);
+      }
+      return cars;
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
+  }
+
+  async findAllOfUser(user: User): Promise<Car[]> {
+    try {
+      const cars = await this.carRepository.find({
+        where: {
+          user_id: user._id,
+        },
+      });
       if (!cars || cars.length === 0) {
         throw new Error(`No cars found`);
       }
@@ -75,12 +88,21 @@ export class CarService {
     }
   }
 
-  async update(licensePlate: string, updateCarDto: UpdateCarDto) {
+  async update(
+    licensePlate: string,
+    updateCarDto: UpdateCarDto,
+    user: User,
+  ): Promise<string> {
     try {
       const car = await this.carRepository.findOneBy({ licensePlate });
       if (!car) {
         throw new NotFoundException(
           `Could not find car with licensePlate ${licensePlate}`,
+        );
+      }
+      if (car.user_id !== user._id) {
+        throw new ForbiddenException(
+          `You don't have permission to edit this car`,
         );
       }
       const updateCar = await this.carRepository.update(
@@ -97,12 +119,17 @@ export class CarService {
     }
   }
 
-  async remove(licensePlate: string) {
+  async remove(licensePlate: string, user: User): Promise<string> {
     try {
       const car = await this.carRepository.findOneBy({ licensePlate });
       if (!car) {
         throw new NotFoundException(
           `Could not find car with licensePlate ${licensePlate}`,
+        );
+      }
+      if (car.user_id !== user._id) {
+        throw new ForbiddenException(
+          `You don't have permission to delete this car`,
         );
       }
       const deleteCar = await this.carRepository.delete({ licensePlate });

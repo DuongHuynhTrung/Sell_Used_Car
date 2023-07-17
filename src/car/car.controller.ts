@@ -67,11 +67,27 @@ export class CarController {
   @ApiInternalServerErrorResponse({
     description: 'Internal server error.',
   })
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(RoleEnum.USER)
   @Get()
   findAll() {
     return this.carService.findAll();
+  }
+
+  @ApiOperation({ summary: 'Get all Car' })
+  @ApiOkResponse({
+    description: 'The car has been successfully retrieved.',
+    type: [Car],
+  })
+  @ApiNotFoundResponse({
+    description: 'No cars found in the repository.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(RoleEnum.USER)
+  @Get('user')
+  findAllOfUser(@GetUser() user: User) {
+    return this.carService.findAllOfUser(user);
   }
 
   @ApiOperation({ summary: 'Get a car by License Plate' })
@@ -107,8 +123,9 @@ export class CarController {
   update(
     @Param('licensePlate') licensePlate: string,
     @Body() updateCarDto: UpdateCarDto,
-  ) {
-    return this.carService.update(licensePlate, updateCarDto);
+    @GetUser() user: User,
+  ): Promise<string> {
+    return this.carService.update(licensePlate, updateCarDto, user);
   }
 
   @ApiBearerAuth()
@@ -125,7 +142,10 @@ export class CarController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleEnum.USER)
   @Delete(':licensePlate')
-  remove(@Param('licensePlate') licensePlate: string) {
-    return this.carService.remove(licensePlate);
+  remove(
+    @Param('licensePlate') licensePlate: string,
+    @GetUser() user: User,
+  ): Promise<string> {
+    return this.carService.remove(licensePlate, user);
   }
 }

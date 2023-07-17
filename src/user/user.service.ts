@@ -2,24 +2,27 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { Car } from 'src/car/entities/car.entity';
+import { CarService } from 'src/car/car.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    private readonly carService: CarService,
   ) {}
 
   async getUsers(): Promise<User[]> {
     try {
-      const users = await this.userRepository.find({
-        relations: { cars: true },
-      });
+      const users = await this.userRepository.find();
       if (!users || users.length === 0) {
         throw new Error(`No users found in the repository`);
       }
@@ -107,6 +110,81 @@ export class UserService {
       } else {
         return 'Delete user failed';
       }
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async addFavoriteCar(licensePlate: string, user: User): Promise<Car[]> {
+    try {
+      const car = await this.carService.findOne(licensePlate);
+
+      if (!user.favoriteCars || user.favoriteCars.length === 0) {
+        user.favoriteCars = [];
+        user.favoriteCars.push(car);
+      } else {
+        const isExist = user.favoriteCars.find(
+          (car) => car.licensePlate === licensePlate,
+        );
+        if (isExist) {
+          throw new BadRequestException('Car is already in the favorites');
+        }
+        user.favoriteCars.push(car);
+      }
+
+      await this.userRepository.save(user);
+
+      return user.favoriteCars;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async removeFavoriteCar(licensePlate: string, user: User): Promise<Car[]> {
+    try {
+      await this.carService.findOne(licensePlate);
+
+      if (!user.favoriteCars || user.favoriteCars.length === 0) {
+        throw new InternalServerErrorException('Favorite Car is empty');
+      }
+
+      const favorites = user.favoriteCars.filter(
+        (car) => car.licensePlate !== licensePlate,
+      );
+
+      user.favoriteCars = favorites;
+
+      await this.userRepository.save(user);
+
+      return user.favoriteCars;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async removeAllFavoriteCar(user: User): Promise<string> {
+    try {
+      if (!user.favoriteCars || user.favoriteCars.length === 0) {
+        throw new InternalServerErrorException('Favorite Car is empty');
+      }
+
+      user.favoriteCars = [];
+
+      await this.userRepository.save(user);
+
+      return 'Remove All Favorite Car';
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async getFavoriteCars(user: User): Promise<Car[]> {
+    try {
+      if (!user.favoriteCars || user.favoriteCars.length === 0) {
+        throw new InternalServerErrorException('Favorite Car is empty');
+      }
+
+      return user.favoriteCars;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

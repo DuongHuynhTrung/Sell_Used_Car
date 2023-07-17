@@ -1,7 +1,9 @@
+import { Car } from 'src/car/entities/car.entity';
 import { Roles } from './../auth/role.decorator';
 import {
   Controller,
   Get,
+  Post,
   Body,
   Patch,
   Param,
@@ -22,6 +24,7 @@ import {
 } from '@nestjs/swagger';
 import { RoleEnum } from './enum/role.enum';
 import { RolesGuard } from 'src/auth/role.guard';
+import { GetUser } from 'src/auth/get-user.decorator';
 
 @UseGuards(JwtGuard)
 @ApiTags('User')
@@ -97,5 +100,77 @@ export class UserController {
   @Delete(':email')
   remove(@Param('email') email: string): Promise<string> {
     return this.userService.deleteUser(email);
+  }
+
+  @ApiOperation({ summary: 'Get Favorite Cars' })
+  @ApiOkResponse({
+    description: 'List of Favorite Car',
+    type: [Car],
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
+  @UseGuards(RolesGuard)
+  @Roles(RoleEnum.USER)
+  @Get('favorites/all')
+  getFavoriteCar(@GetUser() user: User): Promise<Car[]> {
+    return this.userService.getFavoriteCars(user);
+  }
+
+  @ApiOperation({ summary: 'Add Favorite Car' })
+  @ApiOkResponse({
+    description: 'List of Favorite Car',
+    type: [Car],
+  })
+  @ApiNotFoundResponse({
+    description: 'Car not found.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
+  @UseGuards(RolesGuard)
+  @Roles(RoleEnum.USER)
+  @Post('/favorites/:licensePlate')
+  addFavoriteCar(
+    @Param('licensePlate') licensePlate: string,
+    @GetUser() user: User,
+  ): Promise<Car[]> {
+    return this.userService.addFavoriteCar(licensePlate, user);
+  }
+
+  @ApiOperation({ summary: 'Remove All Favorite Car' })
+  @ApiOkResponse({
+    description: 'List of Favorite Car',
+    type: [Car],
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
+  @UseGuards(RolesGuard)
+  @Roles(RoleEnum.USER)
+  @Delete('/favorites/removeAll')
+  removeAllFavoriteCar(@GetUser() user: User): Promise<string> {
+    return this.userService.removeAllFavoriteCar(user);
+  }
+
+  @ApiOperation({ summary: 'Remove Favorite Car' })
+  @ApiOkResponse({
+    description: 'List of Favorite Car',
+    type: [Car],
+  })
+  @ApiNotFoundResponse({
+    description: 'Car not found.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
+  @UseGuards(RolesGuard)
+  @Roles(RoleEnum.USER)
+  @Delete('/favorites/:licensePlate')
+  removeFavoriteCar(
+    @Param('licensePlate') licensePlate: string,
+    @GetUser() user: User,
+  ): Promise<Car[]> {
+    return this.userService.removeFavoriteCar(licensePlate, user);
   }
 }

@@ -126,10 +126,9 @@ export class Car {
   isSold: boolean;
 
   @ApiProperty({
-    description: 'Owner of Car',
-    type: () => User,
+    description: '_id of User of Car',
+    example: new ObjectId('64aea612e3e3014d7e0431ce'),
     nullable: false,
   })
-  @ManyToOne(() => User, (user) => user.cars, { eager: true })
-  user: User;
+  user_id: ObjectId;
 }

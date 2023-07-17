@@ -1,11 +1,4 @@
-import {
-  Entity,
-  Column,
-  BeforeInsert,
-  ObjectIdColumn,
-  OneToMany,
-} from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import { Entity, Column, ObjectIdColumn } from 'typeorm';
 import { RoleEnum } from '../enum/role.enum';
 import { ObjectId } from 'mongodb';
 import { Car } from 'src/car/entities/car.entity';
@@ -93,7 +86,7 @@ export class User {
     nullable: false,
   })
   @Column({ nullable: true })
-  favoriteCars: ObjectId[];
+  favoriteCars: Car[];
 
   @ApiProperty({
     description: 'Role of account',
@@ -110,7 +103,4 @@ export class User {
   })
   @Column({ nullable: false, default: true })
   status: boolean;
-
-  @OneToMany((_type) => Car, (cars) => cars.user, { eager: false })
-  cars: Car[];
 }
