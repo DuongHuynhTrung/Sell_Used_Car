@@ -4,7 +4,6 @@ import { CreateSlotDto } from './dto/create-slot.dto';
 import { Slot } from './entities/slot.entity';
 import {
   ApiTags,
-  ApiBearerAuth,
   ApiOperation,
   ApiOkResponse,
   ApiNotFoundResponse,
@@ -33,8 +32,8 @@ export class SlotController {
     description: 'Internal server error.',
   })
   @Post()
-  create(@Body() createSlotDto: CreateSlotDto): Promise<Slot> {
-    return this.slotService.create(createSlotDto);
+  createSlot(@Body() createSlotDto: CreateSlotDto): Promise<Slot> {
+    return this.slotService.createSlot(createSlotDto);
   }
 
   @ApiOperation({ summary: 'Get All Slot' })
@@ -43,26 +42,47 @@ export class SlotController {
     type: [Slot],
   })
   @ApiNotFoundResponse({
-    description: 'User id not found.',
+    description: 'No slot Found.',
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal server error.',
   })
   @Get()
-  findAll(): Promise<Slot[]> {
-    return this.slotService.findAll();
+  findAllSlot(): Promise<Slot[]> {
+    return this.slotService.findAllSlot();
   }
 
+  @ApiOperation({ summary: 'Get a slot by License Plate and Date' })
+  @ApiOkResponse({
+    description: 'The Slot has been successfully retrieved.',
+    type: Slot,
+  })
+  @ApiNotFoundResponse({
+    description: 'Slot not found.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
   @Get(':licensePlate/:date')
-  findOne(
+  getSlotByLicensePlateAndDate(
     @Param('licensePlate') licensePlate: string,
     @Param('date') date: Date,
   ): Promise<Slot> {
-    return this.slotService.findOne(date, licensePlate);
+    return this.slotService.getSlotByLicensePlateAndDate(date, licensePlate);
   }
 
+  @ApiOperation({ summary: 'Remove Slot' })
+  @ApiOkResponse({
+    description: 'Remove Slot Successfully.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Slot not found.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
   @Delete()
-  remove(@Body() createSlotDto: CreateSlotDto) {
-    return this.slotService.remove(createSlotDto);
+  removeSlot(@Body() createSlotDto: CreateSlotDto) {
+    return this.slotService.removeSlot(createSlotDto);
   }
 }

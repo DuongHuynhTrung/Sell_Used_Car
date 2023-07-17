@@ -9,7 +9,6 @@ import { CreateSlotDto } from './dto/create-slot.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Slot } from './entities/slot.entity';
-import * as moment from 'moment';
 @Injectable()
 export class SlotService {
   constructor(
@@ -19,13 +18,10 @@ export class SlotService {
     private readonly carService: CarService,
   ) {}
 
-  async create(createSlotDto: CreateSlotDto): Promise<Slot> {
-    const dateBooked = moment(createSlotDto.date);
-    const now = moment();
-    if (dateBooked.isBefore(now)) {
-      throw new BadRequestException('Date must equal or after Now');
-    }
-    const car = await this.carService.findOne(createSlotDto.licensePlate);
+  async createSlot(createSlotDto: CreateSlotDto): Promise<Slot> {
+    const car = await this.carService.getCarByLicensePlate(
+      createSlotDto.licensePlate,
+    );
     if (!car) {
       throw new NotFoundException('No Car found!');
     }
@@ -60,7 +56,7 @@ export class SlotService {
     }
   }
 
-  async findAll() {
+  async findAllSlot() {
     try {
       const slots = await this.slotRepository.find();
       if (!slots || slots.length === 0) {
@@ -72,7 +68,10 @@ export class SlotService {
     }
   }
 
-  async findOne(date: Date, licensePlate: string): Promise<Slot> {
+  async getSlotByLicensePlateAndDate(
+    date: Date,
+    licensePlate: string,
+  ): Promise<Slot> {
     if (!date || !licensePlate) {
       throw new BadRequestException('All fields must be provided');
     }
@@ -92,7 +91,7 @@ export class SlotService {
     }
   }
 
-  async remove(createSlotDto: CreateSlotDto) {
+  async removeSlot(createSlotDto: CreateSlotDto) {
     try {
       const isSlotExist = await this.slotRepository.findOneBy({
         licensePlate: createSlotDto.licensePlate,

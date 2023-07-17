@@ -47,7 +47,7 @@ export class UserController {
   @UseGuards(RolesGuard)
   @Roles(RoleEnum.ADMIN)
   @Get()
-  findAll(): Promise<User[]> {
+  getAllUserForAdmin(): Promise<User[]> {
     return this.userService.getUsers();
   }
 
@@ -63,7 +63,7 @@ export class UserController {
     description: 'Internal server error.',
   })
   @Get(':email')
-  findOne(@Param('email') email: string): Promise<User> {
+  getUserByEmail(@Param('email') email: string): Promise<User> {
     return this.userService.getUserByEmail(email);
   }
 
@@ -78,7 +78,7 @@ export class UserController {
     description: 'Internal server error.',
   })
   @Patch(':email')
-  update(
+  updateUserInfoByEmail(
     @Param('email') email: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<string> {
@@ -98,7 +98,7 @@ export class UserController {
   @UseGuards(RolesGuard)
   @Roles(RoleEnum.ADMIN)
   @Delete(':email')
-  remove(@Param('email') email: string): Promise<string> {
+  deleteUserByEmail(@Param('email') email: string): Promise<string> {
     return this.userService.deleteUser(email);
   }
 

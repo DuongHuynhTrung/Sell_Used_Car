@@ -28,6 +28,7 @@ import { Roles } from 'src/auth/role.decorator';
 import { RoleEnum } from 'src/user/enum/role.enum';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/user/entities/user.entity';
+import { CarStatusEnum } from './enum/car-status.enum';
 
 @ApiTags('Car')
 @Controller('cars')
@@ -52,8 +53,8 @@ export class CarController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleEnum.USER)
   @Post()
-  create(@Body() createCarDto: CreateCarDto, @GetUser() user: User) {
-    return this.carService.create(createCarDto, user);
+  createCar(@Body() createCarDto: CreateCarDto, @GetUser() user: User) {
+    return this.carService.createCar(createCarDto, user);
   }
 
   @ApiOperation({ summary: 'Get all Car' })
@@ -68,8 +69,8 @@ export class CarController {
     description: 'Internal server error.',
   })
   @Get()
-  findAll() {
-    return this.carService.findAll();
+  getAllCar() {
+    return this.carService.getCars();
   }
 
   @ApiOperation({ summary: 'Get all Car' })
@@ -86,14 +87,14 @@ export class CarController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleEnum.USER)
   @Get('user')
-  findAllOfUser(@GetUser() user: User) {
+  getAllCarOfUser(@GetUser() user: User) {
     return this.carService.findAllOfUser(user);
   }
 
   @ApiOperation({ summary: 'Get a car by License Plate' })
   @ApiOkResponse({
     description: 'The car has been successfully retrieved.',
-    type: [Car],
+    type: Car,
   })
   @ApiNotFoundResponse({
     description: 'Car not found.',
@@ -102,8 +103,8 @@ export class CarController {
     description: 'Internal server error.',
   })
   @Get(':licensePlate')
-  findOne(@Param('licensePlate') licensePlate: string) {
-    return this.carService.findOne(licensePlate);
+  getCarByLicensePlate(@Param('licensePlate') licensePlate: string) {
+    return this.carService.getCarByLicensePlate(licensePlate);
   }
 
   @ApiBearerAuth()
@@ -120,12 +121,12 @@ export class CarController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleEnum.USER)
   @Patch(':licensePlate')
-  update(
+  updateCarInfo(
     @Param('licensePlate') licensePlate: string,
     @Body() updateCarDto: UpdateCarDto,
     @GetUser() user: User,
   ): Promise<string> {
-    return this.carService.update(licensePlate, updateCarDto, user);
+    return this.carService.updateCarInfo(licensePlate, updateCarDto, user);
   }
 
   @ApiBearerAuth()
@@ -142,11 +143,11 @@ export class CarController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleEnum.USER)
   @Delete(':licensePlate')
-  remove(
+  deleteCar(
     @Param('licensePlate') licensePlate: string,
     @GetUser() user: User,
   ): Promise<string> {
-    return this.carService.remove(licensePlate, user);
+    return this.carService.deleteCar(licensePlate, user);
   }
 
   @ApiBearerAuth()
@@ -163,8 +164,11 @@ export class CarController {
   })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleEnum.ADMIN)
-  @Delete('adminConfirm/:licensePlate')
-  confirmCar(@Param('licensePlate') licensePlate: string): Promise<Car> {
-    return this.carService.confirmCar(licensePlate);
+  @Patch('adminConfirm/:licensePlate')
+  changeCarStatus(
+    @Param('licensePlate') licensePlate: string,
+    @Param('status') status: CarStatusEnum,
+  ): Promise<Car> {
+    return this.carService.changeCarStatus(licensePlate, status);
   }
 }

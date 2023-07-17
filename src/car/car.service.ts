@@ -21,7 +21,7 @@ export class CarService {
     private readonly carRepository: Repository<Car>,
   ) {}
 
-  async create(createCarDto: CreateCarDto, user: User): Promise<Car> {
+  async createCar(createCarDto: CreateCarDto, user: User): Promise<Car> {
     const isExistLicensePlate = await this.carRepository.findOneBy({
       licensePlate: createCarDto.licensePlate,
     });
@@ -48,7 +48,7 @@ export class CarService {
     return car;
   }
 
-  async findAll(): Promise<Car[]> {
+  async getCars(): Promise<Car[]> {
     try {
       const cars = await this.carRepository.find();
       if (!cars || cars.length === 0) {
@@ -76,7 +76,7 @@ export class CarService {
     }
   }
 
-  async findOne(licensePlate: string): Promise<Car> {
+  async getCarByLicensePlate(licensePlate: string): Promise<Car> {
     try {
       const car = await this.carRepository.findOneBy({ licensePlate });
       if (!car) {
@@ -90,7 +90,7 @@ export class CarService {
     }
   }
 
-  async update(
+  async updateCarInfo(
     licensePlate: string,
     updateCarDto: UpdateCarDto,
     user: User,
@@ -121,7 +121,7 @@ export class CarService {
     }
   }
 
-  async remove(licensePlate: string, user: User): Promise<string> {
+  async deleteCar(licensePlate: string, user: User): Promise<string> {
     try {
       const car = await this.carRepository.findOneBy({ licensePlate });
       if (!car) {
@@ -145,7 +145,10 @@ export class CarService {
     }
   }
 
-  async confirmCar(licensePlate: string): Promise<Car> {
+  async changeCarStatus(
+    licensePlate: string,
+    status: CarStatusEnum,
+  ): Promise<Car> {
     try {
       const car = await this.carRepository.findOneBy({ licensePlate });
       if (!car) {
@@ -153,7 +156,7 @@ export class CarService {
           `Could not find car with licensePlate ${licensePlate}`,
         );
       }
-      car.status = CarStatusEnum.CONFIRM;
+      car.status = status;
       await this.carRepository.save(car);
       return car;
     } catch (error) {

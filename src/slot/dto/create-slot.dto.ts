@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsDate,
   IsDateString,
   IsEnum,
   IsNotEmpty,
@@ -13,7 +14,6 @@ export class CreateSlotDto {
     description: 'Date booked',
     example: '2023-07-13',
   })
-  @IsDateString()
   @IsNotEmpty()
   date: Date;
 
