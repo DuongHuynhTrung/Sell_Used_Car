@@ -117,7 +117,7 @@ export class UserService {
 
   async addFavoriteCar(licensePlate: string, user: User): Promise<Car[]> {
     try {
-      const car = await this.carService.findOne(licensePlate);
+      const car = await this.carService.getCarByLicensePlate(licensePlate);
 
       if (!user.favoriteCars || user.favoriteCars.length === 0) {
         user.favoriteCars = [];
@@ -142,7 +142,7 @@ export class UserService {
 
   async removeFavoriteCar(licensePlate: string, user: User): Promise<Car[]> {
     try {
-      await this.carService.findOne(licensePlate);
+      await this.carService.getCarByLicensePlate(licensePlate);
 
       if (!user.favoriteCars || user.favoriteCars.length === 0) {
         throw new InternalServerErrorException('Favorite Car is empty');
