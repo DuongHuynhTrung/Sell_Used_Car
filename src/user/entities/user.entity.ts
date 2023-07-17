@@ -88,12 +88,12 @@ export class User {
   imgUrl: string;
 
   @ApiProperty({
-    description: 'Status of account',
-    example: 'true',
-    default: true,
+    description: 'Favorite cars',
+    example: `[new ObjectId('64aea612e3e3014d7e0431ce'), new ObjectId('64aea612e3e3014d7e0431ce')]`,
+    nullable: false,
   })
-  @Column({ nullable: false, default: true })
-  status: boolean;
+  @Column({ nullable: true })
+  favoriteCars: ObjectId[];
 
   @ApiProperty({
     description: 'Role of account',
@@ -103,12 +103,14 @@ export class User {
   @Column({ nullable: false, default: RoleEnum.USER })
   role: RoleEnum;
 
+  @ApiProperty({
+    description: 'Status of account',
+    example: 'true',
+    default: true,
+  })
+  @Column({ nullable: false, default: true })
+  status: boolean;
+
   @OneToMany((_type) => Car, (cars) => cars.user, { eager: false })
   cars: Car[];
-
-  @BeforeInsert()
-  async hashPasword() {
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt);
-  }
 }

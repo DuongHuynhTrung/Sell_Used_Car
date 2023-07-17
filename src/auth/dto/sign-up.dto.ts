@@ -25,7 +25,7 @@ export class SignUpDto {
   @ApiProperty({
     description: 'Date of Birth',
     example: '2001-02-22',
-    nullable: false,
+    nullable: true,
   })
   @IsDateString()
   @IsOptional()
@@ -34,7 +34,7 @@ export class SignUpDto {
   @ApiProperty({
     description: 'Address of User',
     example: 'Tp. Thủ Đức, Tp. Hồ Chí Minh',
-    nullable: false,
+    nullable: true,
   })
   @IsString()
   @IsOptional()
@@ -43,7 +43,7 @@ export class SignUpDto {
   @ApiProperty({
     description: 'Gender of User',
     example: 'Male',
-    nullable: false,
+    nullable: true,
   })
   @IsString()
   @IsOptional()
@@ -52,7 +52,7 @@ export class SignUpDto {
   @ApiProperty({
     description: 'Phone number of User',
     example: '0838323403',
-    nullable: false,
+    nullable: true,
     uniqueItems: true,
   })
   @IsNumberString()
@@ -81,7 +81,7 @@ export class SignUpDto {
     description: 'Url image of User',
     example:
       'https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/327289318_1901932446843118_789342237429371693_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=Ie7RpU-i4I4AX8aGpyb&_nc_ht=scontent.fsgn5-9.fna&oh=00_AfDtaGSwvXURIPPTj2k-5mEAPF1wVpd-mly2L6BJkMY4aw&oe=64B4C725',
-    nullable: false,
+    nullable: true,
   })
   @IsString()
   @IsOptional()
@@ -91,7 +91,7 @@ export class SignUpDto {
   @ApiProperty({
     description: 'Role of account: User/Admin',
     example: 'User',
-    nullable: false,
+    nullable: true,
   })
   @IsOptional()
   @IsEnum(RoleEnum)

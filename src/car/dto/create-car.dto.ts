@@ -51,8 +51,4 @@ export class CreateCarDto {
   @IsArray()
   @IsNotEmpty()
   images: string[];
-
-  @IsNotEmpty()
-  @IsString()
-  userId: string;
 }

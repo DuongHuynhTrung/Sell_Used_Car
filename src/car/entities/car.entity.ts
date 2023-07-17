@@ -118,10 +118,18 @@ export class Car {
   images: string[];
 
   @ApiProperty({
+    description: 'Has the car been sold or not',
+    example: false,
+    nullable: false,
+  })
+  @Column({ nullable: false, default: false })
+  isSold: boolean;
+
+  @ApiProperty({
     description: 'Owner of Car',
     type: () => User,
     nullable: false,
   })
-  @ManyToOne((_type) => User, (user) => user.cars, { eager: true })
+  @ManyToOne(() => User, (user) => user.cars, { eager: true })
   user: User;
 }

@@ -26,6 +26,8 @@ import { JwtGuard } from 'src/auth/jwt.guard';
 import { RolesGuard } from 'src/auth/role.guard';
 import { Roles } from 'src/auth/role.decorator';
 import { RoleEnum } from 'src/user/enum/role.enum';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @ApiTags('Car')
 @Controller('cars')
@@ -50,8 +52,8 @@ export class CarController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleEnum.USER)
   @Post()
-  create(@Body() createCarDto: CreateCarDto) {
-    return this.carService.create(createCarDto);
+  create(@Body() createCarDto: CreateCarDto, @GetUser() user: User) {
+    return this.carService.create(createCarDto, user);
   }
 
   @ApiOperation({ summary: 'Get all Car' })
@@ -65,6 +67,8 @@ export class CarController {
   @ApiInternalServerErrorResponse({
     description: 'Internal server error.',
   })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(RoleEnum.USER)
   @Get()
   findAll() {
     return this.carService.findAll();

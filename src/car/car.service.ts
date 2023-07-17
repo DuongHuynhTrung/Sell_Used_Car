@@ -3,6 +3,7 @@ import {
   BadRequestException,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
@@ -22,7 +23,7 @@ export class CarService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createCarDto: CreateCarDto): Promise<Car> {
+  async create(createCarDto: CreateCarDto, user: User): Promise<Car> {
     const isExistLicensePlate = await this.carRepository.findOneBy({
       licensePlate: createCarDto.licensePlate,
     });
@@ -36,13 +37,8 @@ export class CarService {
       );
     }
 
-    const user = await this.userRepository.findOneBy({
-      _id: new ObjectId(createCarDto.userId),
-    });
     if (!user) {
-      throw new NotFoundException(
-        `User with id ${createCarDto.userId} does not exist`,
-      );
+      throw new UnauthorizedException(`User Unauthorized`);
     }
     car.user = user;
     try {
@@ -55,13 +51,10 @@ export class CarService {
 
   async findAll(): Promise<Car[]> {
     try {
-      const cars = await this.carRepository.find({
-        relations: ['user'],
-      });
+      const cars = await this.carRepository.find();
       if (!cars || cars.length === 0) {
         throw new Error(`No cars found`);
       }
-      cars.forEach((car) => console.log(car.user));
       return cars;
     } catch (error) {
       throw new NotFoundException(error.message);
