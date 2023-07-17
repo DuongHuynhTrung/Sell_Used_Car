@@ -1,6 +1,6 @@
+import { CreateSlotDto } from 'src/slot/dto/create-slot.dto';
 import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { SlotService } from './slot.service';
-import { CreateSlotDto } from './dto/create-slot.dto';
 import { Slot } from './entities/slot.entity';
 import {
   ApiTags,
@@ -11,6 +11,7 @@ import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
+import { GetSlotLicensePlateDateDto } from './dto/get-slot-licensePlate-date.dto';
 
 @ApiTags('Slot')
 @Controller('slots')
@@ -63,12 +64,13 @@ export class SlotController {
   @ApiInternalServerErrorResponse({
     description: 'Internal server error.',
   })
-  @Get(':licensePlate/:date')
+  @Get('/:licensePlate/:date')
   getSlotByLicensePlateAndDate(
-    @Param('licensePlate') licensePlate: string,
-    @Param('date') date: Date,
+    @Param() getSlotLicensePlateDateDto: GetSlotLicensePlateDateDto,
   ): Promise<Slot> {
-    return this.slotService.getSlotByLicensePlateAndDate(date, licensePlate);
+    return this.slotService.getSlotByLicensePlateAndDate(
+      getSlotLicensePlateDateDto,
+    );
   }
 
   @ApiOperation({ summary: 'Remove Slot' })

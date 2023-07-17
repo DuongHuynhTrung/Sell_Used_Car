@@ -1,3 +1,6 @@
+import { NotificationTypeEnum } from './../notification/enum/notification-type.enum';
+import { CreateNotificationDto } from './../notification/dto/create-notification.dto';
+import { NotificationService } from './../notification/notification.service';
 import {
   Injectable,
   BadRequestException,
@@ -19,6 +22,8 @@ export class CarService {
   constructor(
     @InjectRepository(Car)
     private readonly carRepository: Repository<Car>,
+
+    private readonly notificationService: NotificationService,
   ) {}
 
   async createCar(createCarDto: CreateCarDto, user: User): Promise<Car> {
@@ -45,6 +50,19 @@ export class CarService {
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
+
+    const createNotificationDto = new CreateNotificationDto();
+    createNotificationDto.type = NotificationTypeEnum.REGISTER_CAR;
+    createNotificationDto.description = `Create the Car with License Plate ${createCarDto.licensePlate} was Successful.`;
+    try {
+      await this.notificationService.createNotification(
+        createNotificationDto,
+        user._id,
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+
     return car;
   }
 
@@ -150,15 +168,75 @@ export class CarService {
     status: CarStatusEnum,
   ): Promise<Car> {
     try {
-      const car = await this.carRepository.findOneBy({ licensePlate });
-      if (!car) {
-        throw new NotFoundException(
-          `Could not find car with licensePlate ${licensePlate}`,
-        );
+      switch (status) {
+        case CarStatusEnum.CONFIRM: {
+          const car = await this.carRepository.findOneBy({ licensePlate });
+          if (!car) {
+            throw new NotFoundException(
+              `Could not find car with licensePlate ${licensePlate}`,
+            );
+          }
+          car.status = status;
+          await this.carRepository.save(car);
+
+          const createNotificationDto = new CreateNotificationDto();
+          createNotificationDto.type = NotificationTypeEnum.CONFIRM_CAR;
+          createNotificationDto.description = `The Car with License Plate ${car.licensePlate} is selling`;
+          await this.notificationService.createNotification(
+            createNotificationDto,
+            car.user_id,
+          );
+
+          return car;
+          break;
+        }
+        case CarStatusEnum.SOLD: {
+          const car = await this.carRepository.findOneBy({ licensePlate });
+          if (!car) {
+            throw new NotFoundException(
+              `Could not find car with licensePlate ${licensePlate}`,
+            );
+          }
+          car.status = status;
+          await this.carRepository.save(car);
+
+          const createNotificationDto = new CreateNotificationDto();
+          createNotificationDto.type = NotificationTypeEnum.SOLD_CAR;
+          createNotificationDto.description = `The Car with License Plate ${car.licensePlate} had already been sold`;
+          await this.notificationService.createNotification(
+            createNotificationDto,
+            car.user_id,
+          );
+
+          return car;
+          break;
+        }
+        case CarStatusEnum.CANCELLED: {
+          const car = await this.carRepository.findOneBy({ licensePlate });
+          if (!car) {
+            throw new NotFoundException(
+              `Could not find car with licensePlate ${licensePlate}`,
+            );
+          }
+          car.status = status;
+          await this.carRepository.save(car);
+
+          const createNotificationDto = new CreateNotificationDto();
+          createNotificationDto.type = NotificationTypeEnum.CANCELLED_CAR;
+          createNotificationDto.description = `The Car with License Plate ${car.licensePlate} has been refused for sale`;
+          await this.notificationService.createNotification(
+            createNotificationDto,
+            car.user_id,
+          );
+
+          return car;
+          break;
+        }
+        default: {
+          throw new BadRequestException('Invalid Car status');
+          break;
+        }
       }
-      car.status = status;
-      await this.carRepository.save(car);
-      return car;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

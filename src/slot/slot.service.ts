@@ -9,6 +9,7 @@ import { CreateSlotDto } from './dto/create-slot.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Slot } from './entities/slot.entity';
+import { GetSlotLicensePlateDateDto } from './dto/get-slot-licensePlate-date.dto';
 @Injectable()
 export class SlotService {
   constructor(
@@ -69,20 +70,16 @@ export class SlotService {
   }
 
   async getSlotByLicensePlateAndDate(
-    date: Date,
-    licensePlate: string,
+    getSlotLicensePlateDateDto: GetSlotLicensePlateDateDto,
   ): Promise<Slot> {
-    if (!date || !licensePlate) {
-      throw new BadRequestException('All fields must be provided');
-    }
     try {
       const isSlotExist = await this.slotRepository.findOneBy({
-        licensePlate,
-        date,
+        licensePlate: getSlotLicensePlateDateDto.licensePlate,
+        date: getSlotLicensePlateDateDto.date,
       });
       if (!isSlotExist) {
         throw new NotFoundException(
-          `Could not find slot with ${licensePlate} and ${date}`,
+          `Could not find slot with ${getSlotLicensePlateDateDto.licensePlate} and ${getSlotLicensePlateDateDto.date}`,
         );
       }
       return isSlotExist;

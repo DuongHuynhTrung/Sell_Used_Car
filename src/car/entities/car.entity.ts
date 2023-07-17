@@ -119,7 +119,7 @@ export class Car {
 
   @ApiProperty({
     description: 'Has the car been sold or not',
-    example: false,
+    example: 'Pending',
     nullable: false,
   })
   @Column({ nullable: false, default: false })
@@ -130,5 +130,6 @@ export class Car {
     example: new ObjectId('64aea612e3e3014d7e0431ce'),
     nullable: false,
   })
+  @Column()
   user_id: ObjectId;
 }

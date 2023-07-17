@@ -10,6 +10,8 @@ import { SlotModule } from './slot/slot.module';
 import { Slot } from './slot/entities/slot.entity';
 import { BookingModule } from './booking/booking.module';
 import { Booking } from './booking/entities/booking.entity';
+import { NotificationModule } from './notification/notification.module';
+import { Notification } from './notification/entities/notification.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,7 +25,7 @@ import { Booking } from './booking/entities/booking.entity';
         url: configService.get('DB_URI'),
         useNewUrlParser: true,
         logging: true,
-        entities: [User, Car, Slot, Booking],
+        entities: [User, Car, Slot, Booking, Notification],
         autoLoadEntities: true,
       }),
     }),
@@ -32,6 +34,7 @@ import { Booking } from './booking/entities/booking.entity';
     CarModule,
     SlotModule,
     BookingModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}

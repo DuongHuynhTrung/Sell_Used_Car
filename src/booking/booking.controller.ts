@@ -9,6 +9,7 @@ import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
   ApiForbiddenResponse,
+  ApiBody,
 } from '@nestjs/swagger';
 import { BookingService } from './booking.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
@@ -69,10 +70,21 @@ export class BookingController {
   }
 
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update Booking Status by BookingId' })
+  @ApiOperation({ summary: 'Cancel Booking by BookingId' })
+  @ApiBody({
+    description: 'Booking Id',
+    type: 'string',
+    examples: {
+      booking_id: {
+        value: {
+          booking_id: '64b564311030516becb4dbc4',
+        },
+      },
+    },
+  })
   @ApiOkResponse({
-    description: 'Bookings Of User has been retrieved.',
-    type: [Booking],
+    description: 'Booking Of User has been retrieved.',
+    type: Booking,
   })
   @ApiNotFoundResponse({
     description: 'Booking not found.',
@@ -86,10 +98,10 @@ export class BookingController {
   @UseGuards(RolesGuard)
   @Roles(RoleEnum.USER)
   @Patch()
-  changeBookingStatus(
+  cancelBookingStatus(
     @GetUser() user: User,
     @Body('booking_id') booking_id: string,
-  ): Promise<Booking[]> {
-    return this.bookingService.changeBookingStatus(user, booking_id);
+  ): Promise<Booking> {
+    return this.bookingService.cancelBookingStatus(user, booking_id);
   }
 }

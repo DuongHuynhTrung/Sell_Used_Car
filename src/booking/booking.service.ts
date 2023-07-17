@@ -1,3 +1,5 @@
+import { NotificationTypeEnum } from './../notification/enum/notification-type.enum';
+import { CreateNotificationDto } from './../notification/dto/create-notification.dto';
 import {
   BadRequestException,
   Injectable,
@@ -16,6 +18,7 @@ import { BookingStatusEnum } from './enum/booking-status.enum';
 import { RoleEnum } from 'src/user/enum/role.enum';
 import { ObjectId } from 'mongodb';
 import { CreateSlotDto } from 'src/slot/dto/create-slot.dto';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class BookingService {
@@ -26,6 +29,8 @@ export class BookingService {
     private readonly carService: CarService,
 
     private readonly slotService: SlotService,
+
+    private readonly notificationService: NotificationService,
   ) {}
   async createBooking(
     createBookingDto: CreateBookingDto,
@@ -41,7 +46,17 @@ export class BookingService {
       }
       booking.email = user.email;
       booking.status = BookingStatusEnum.SUCCESS;
+
       await this.slotService.createSlot(createBookingDto);
+
+      const createNotificationDto = new CreateNotificationDto();
+      createNotificationDto.type = NotificationTypeEnum.CREATE_BOOKING;
+      createNotificationDto.description = `Create Booking the car with License Plate ${createBookingDto.licensePlate} on ${createBookingDto.date} was successful.`;
+      await this.notificationService.createNotification(
+        createNotificationDto,
+        user._id,
+      );
+
       await this.bookingsRepository.save(booking);
       return booking;
     } catch (error) {
@@ -76,10 +91,7 @@ export class BookingService {
     }
   }
 
-  async changeBookingStatus(
-    user: User,
-    booking_id: string,
-  ): Promise<Booking[]> {
+  async cancelBookingStatus(user: User, booking_id: string): Promise<Booking> {
     try {
       const booking = await this.bookingsRepository.findOneBy({
         _id: new ObjectId(booking_id),
@@ -99,11 +111,17 @@ export class BookingService {
       createSlotDto.date = booking.date;
       createSlotDto.licensePlate = booking.licensePlate;
       createSlotDto.slot = booking.slot;
-
       await this.slotService.removeSlot(createSlotDto);
 
-      const bookings = await this.findAllBookings(user);
-      return bookings;
+      const createNotificationDto = new CreateNotificationDto();
+      createNotificationDto.type = NotificationTypeEnum.CANCEL_BOOKING;
+      createNotificationDto.description = `Cancel Booking the car with License Plate ${booking.licensePlate} on ${booking.date} was successful.`;
+      await this.notificationService.createNotification(
+        createNotificationDto,
+        user._id,
+      );
+
+      return booking;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
