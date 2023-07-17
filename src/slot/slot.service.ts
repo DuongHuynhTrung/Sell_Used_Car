@@ -6,41 +6,37 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateSlotDto } from './dto/create-slot.dto';
-import moment from 'moment';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MongoRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Slot } from './entities/slot.entity';
-import { ObjectId } from 'mongodb';
-import { Car } from 'src/car/entities/car.entity';
-
+import * as moment from 'moment';
 @Injectable()
 export class SlotService {
   constructor(
     @InjectRepository(Slot)
-    private slotRepository: MongoRepository<Slot>,
+    private readonly slotRepository: Repository<Slot>,
 
-    @InjectRepository(Car)
-    private carRepository: MongoRepository<Slot>,
+    private readonly carService: CarService,
   ) {}
 
-  async create(createSlotDto: CreateSlotDto) {
+  async create(createSlotDto: CreateSlotDto): Promise<Slot> {
     const dateBooked = moment(createSlotDto.date);
     const now = moment();
     if (dateBooked.isBefore(now)) {
       throw new BadRequestException('Date must equal or after Now');
     }
-    const car = await this.carRepository.findOneBy({
-      _id: createSlotDto.car_id,
-    });
+    const car = await this.carService.findOne(createSlotDto.licensePlate);
     if (!car) {
       throw new NotFoundException('No Car found!');
     }
     const isSlotExist = await this.slotRepository.findOneBy({
-      date: dateBooked,
-      carId: car._id,
+      licensePlate: car.licensePlate,
+      date: createSlotDto.date,
     });
-
     if (isSlotExist) {
+      if (isSlotExist.slotStored.includes(createSlotDto.slot)) {
+        throw new BadRequestException('Slot has already booked');
+      }
       isSlotExist.slotStored.push(createSlotDto.slot);
       try {
         await this.slotRepository.save(isSlotExist);
@@ -57,19 +53,66 @@ export class SlotService {
           'Something went wrong when creating slot',
         );
       }
+      slot.slotStored = [];
+      slot.slotStored.push(createSlotDto.slot);
+      await this.slotRepository.save(slot);
       return slot;
     }
   }
 
-  findAll() {
-    return `This action returns all slot`;
+  async findAll() {
+    try {
+      const slots = await this.slotRepository.find();
+      if (!slots || slots.length === 0) {
+        throw new NotFoundException('No slots found');
+      }
+      return slots;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} slot`;
+  async findOne(date: Date, licensePlate: string): Promise<Slot> {
+    if (!date || !licensePlate) {
+      throw new BadRequestException('All fields must be provided');
+    }
+    try {
+      const isSlotExist = await this.slotRepository.findOneBy({
+        licensePlate,
+        date,
+      });
+      if (!isSlotExist) {
+        throw new NotFoundException(
+          `Could not find slot with ${licensePlate} and ${date}`,
+        );
+      }
+      return isSlotExist;
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} slot`;
+  async remove(createSlotDto: CreateSlotDto) {
+    try {
+      const isSlotExist = await this.slotRepository.findOneBy({
+        licensePlate: createSlotDto.licensePlate,
+        date: createSlotDto.date,
+      });
+      if (!isSlotExist) {
+        throw new NotFoundException(
+          `Could not find slot with ${createSlotDto.licensePlate}} and ${createSlotDto.date}`,
+        );
+      }
+      if (isSlotExist.slotStored.includes(createSlotDto.slot)) {
+        const removeSlot = isSlotExist.slotStored.filter(
+          (slot) => slot !== createSlotDto.slot,
+        );
+        isSlotExist.slotStored = removeSlot;
+      }
+      await this.slotRepository.save(isSlotExist);
+      return isSlotExist;
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 }

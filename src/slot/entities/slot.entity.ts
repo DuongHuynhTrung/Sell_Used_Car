@@ -1,9 +1,10 @@
 import { Car } from 'src/car/entities/car.entity';
-import { Column, ManyToOne, ObjectIdColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, ObjectIdColumn } from 'typeorm';
 import { SlotEnum } from '../enum/slot.enum';
 import { ObjectId } from 'mongodb';
 import { ApiProperty } from '@nestjs/swagger';
 
+@Entity()
 export class Slot {
   @ApiProperty({
     description: 'ObjectId as Slot Id',
@@ -30,10 +31,10 @@ export class Slot {
   slotStored: SlotEnum[];
 
   @ApiProperty({
-    description: 'User booking',
-    type: () => Car,
+    description: 'License Plate of Car',
+    example: 'H5-12562',
     nullable: false,
   })
-  @ManyToOne(() => Car)
-  carId: Car;
+  @Column()
+  licensePlate: string;
 }

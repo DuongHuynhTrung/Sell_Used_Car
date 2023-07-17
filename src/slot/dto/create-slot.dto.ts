@@ -1,7 +1,12 @@
-import { IsArray, IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
 import { SlotEnum } from '../enum/slot.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { ObjectId } from 'mongodb';
 
 export class CreateSlotDto {
   @ApiProperty({
@@ -16,15 +21,16 @@ export class CreateSlotDto {
     description: 'Slot has booked',
     example: '[Slot1,Slot2,Slot3]',
   })
-  @IsArray()
+  @IsEnum(SlotEnum)
   @IsNotEmpty()
   slot: SlotEnum;
 
   @ApiProperty({
-    description: 'CarId has booked',
-    example: new ObjectId('64aea612e3e3014d7e0431ce'),
+    description: 'License Plate of Car',
+    example: 'H5-12562',
+    nullable: false,
   })
   @IsString()
   @IsNotEmpty()
-  car_id: string;
+  licensePlate: string;
 }

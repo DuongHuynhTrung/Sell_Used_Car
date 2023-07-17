@@ -148,4 +148,23 @@ export class CarController {
   ): Promise<string> {
     return this.carService.remove(licensePlate, user);
   }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Admin confirm Car by License Plate' })
+  @ApiOkResponse({
+    description: 'The car has been successfully retrieved.',
+    type: Car,
+  })
+  @ApiNotFoundResponse({
+    description: 'Could not find car with licensePlate.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error.',
+  })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN)
+  @Delete('adminConfirm/:licensePlate')
+  confirmCar(@Param('licensePlate') licensePlate: string): Promise<Car> {
+    return this.carService.confirmCar(licensePlate);
+  }
 }

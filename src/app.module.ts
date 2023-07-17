@@ -7,8 +7,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CarModule } from './car/car.module';
 import { Car } from './car/entities/car.entity';
 import { SlotModule } from './slot/slot.module';
-import { RolesGuard } from './auth/role.guard';
-import { APP_GUARD } from '@nestjs/core';
 import { Slot } from './slot/entities/slot.entity';
 import { BookingModule } from './booking/booking.module';
 @Module({

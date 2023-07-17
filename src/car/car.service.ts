@@ -12,6 +12,7 @@ import { Repository } from 'typeorm';
 import { Car } from './entities/car.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { CarStatusEnum } from './enum/car-status.enum';
 
 @Injectable()
 export class CarService {
@@ -38,6 +39,7 @@ export class CarService {
       throw new UnauthorizedException(`User Unauthorized`);
     }
     car.user_id = user._id;
+    car.status = CarStatusEnum.PENDING;
     try {
       await this.carRepository.save(car);
     } catch (error) {
@@ -138,6 +140,22 @@ export class CarService {
       } else {
         return 'Delete Car failed';
       }
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async confirmCar(licensePlate: string): Promise<Car> {
+    try {
+      const car = await this.carRepository.findOneBy({ licensePlate });
+      if (!car) {
+        throw new NotFoundException(
+          `Could not find car with licensePlate ${licensePlate}`,
+        );
+      }
+      car.status = CarStatusEnum.CONFIRM;
+      await this.carRepository.save(car);
+      return car;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

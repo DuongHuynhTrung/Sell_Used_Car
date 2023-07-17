@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ObjectId } from 'mongodb';
 import { User } from 'src/user/entities/user.entity';
 import { Column, Entity, ManyToOne, ObjectIdColumn } from 'typeorm';
+import { CarStatusEnum } from '../enum/car-status.enum';
 
 @Entity()
 export class Car {
@@ -123,7 +124,7 @@ export class Car {
     nullable: false,
   })
   @Column({ nullable: false, default: false })
-  isSold: boolean;
+  status: CarStatusEnum;
 
   @ApiProperty({
     description: '_id of User of Car',
