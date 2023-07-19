@@ -12,6 +12,9 @@ import { BookingModule } from './booking/booking.module';
 import { Booking } from './booking/entities/booking.entity';
 import { NotificationModule } from './notification/notification.module';
 import { Notification } from './notification/entities/notification.entity';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EmailModule } from './email/email.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -29,12 +32,31 @@ import { Notification } from './notification/entities/notification.entity';
         autoLoadEntities: true,
       }),
     }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (config: ConfigService) => ({
+        // transport: config.get('MAIL_TRANSPORT'),
+        transport: {
+          host: config.get('MAIL_HOST'),
+          secure: false,
+          auth: {
+            user: config.get('MAIL_USER'),
+            pass: config.get('MAIL_PASSWORD'),
+          },
+        },
+        defaults: {
+          from: `"Driveconn" <${config.get('MAIL_FROM')}>`,
+        },
+      }),
+      inject: [ConfigService],
+    }),
     AuthModule,
     UserModule,
     CarModule,
     SlotModule,
     BookingModule,
     NotificationModule,
+    EmailModule,
   ],
 })
 export class AppModule {}
