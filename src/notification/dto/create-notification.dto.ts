@@ -1,6 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { NotificationTypeEnum } from '../enum/notification-type.enum';
-import { ObjectId } from 'mongodb';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateNotificationDto {

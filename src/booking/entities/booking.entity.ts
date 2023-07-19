@@ -2,7 +2,8 @@ import { ObjectId } from 'mongodb';
 import { SlotEnum } from 'src/slot/enum/slot.enum';
 import { BookingStatusEnum } from '../enum/booking-status.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, ObjectIdColumn } from 'typeorm';
+import { Column, Entity, ObjectIdColumn, OneToOne } from 'typeorm';
+import { Car } from 'src/car/entities/car.entity';
 
 @Entity()
 export class Booking {
@@ -44,6 +45,30 @@ export class Booking {
   })
   @Column({ nullable: false })
   date: Date;
+
+  @ApiProperty({
+    description: 'Full Name of User Booking',
+    example: 'Huỳnh Trùng Dương',
+    nullable: false,
+  })
+  @Column({ nullable: false })
+  fullName: string;
+
+  @ApiProperty({
+    description: 'Phone of User Booking',
+    example: '0838323403',
+    nullable: false,
+  })
+  @Column({ nullable: false })
+  phone: string;
+
+  @ApiProperty({
+    description: 'Note of Booking',
+    example: 'Đến trễ 15p',
+    nullable: true,
+  })
+  @Column({ nullable: true })
+  note: string;
 
   @ApiProperty({
     description: 'Booking Status',

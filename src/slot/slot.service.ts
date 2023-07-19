@@ -78,10 +78,17 @@ export class SlotService {
         date: getSlotLicensePlateDateDto.date,
       });
       if (!isSlotExist) {
-        throw new NotFoundException(
-          `Could not find slot with ${getSlotLicensePlateDateDto.licensePlate} and ${getSlotLicensePlateDateDto.date}`,
-        );
+        const slot = new Slot();
+        slot.date = getSlotLicensePlateDateDto.date;
+        slot.licensePlate = getSlotLicensePlateDateDto.licensePlate;
+        slot.slotStored = [];
+        return slot;
       }
+      // if (!isSlotExist) {
+      //   throw new NotFoundException(
+      //     `Could not find slot with ${getSlotLicensePlateDateDto.licensePlate} and ${getSlotLicensePlateDateDto.date}`,
+      //   );
+      // }
       return isSlotExist;
     } catch (error) {
       throw new NotFoundException(error.message);

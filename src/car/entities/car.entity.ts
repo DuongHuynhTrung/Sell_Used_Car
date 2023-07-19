@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ObjectId } from 'mongodb';
-import { Column, Entity, ObjectIdColumn } from 'typeorm';
+import { Column, Entity, ObjectIdColumn, OneToOne } from 'typeorm';
 import { CarStatusEnum } from '../enum/car-status.enum';
+import { Booking } from 'src/booking/entities/booking.entity';
 
 @Entity()
 export class Car {

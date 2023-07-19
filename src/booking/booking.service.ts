@@ -19,6 +19,7 @@ import { RoleEnum } from 'src/user/enum/role.enum';
 import { ObjectId } from 'mongodb';
 import { CreateSlotDto } from 'src/slot/dto/create-slot.dto';
 import { NotificationService } from 'src/notification/notification.service';
+import { Car } from 'src/car/entities/car.entity';
 
 @Injectable()
 export class BookingService {
@@ -64,14 +65,22 @@ export class BookingService {
     }
   }
 
-  async findAllBookings(user: User): Promise<Booking[]> {
+  async findAllBookings(user: User): Promise<[Booking, Car][]> {
     try {
       if (user.role === RoleEnum.ADMIN) {
         const bookings = await this.bookingsRepository.find();
         if (!bookings || bookings.length === 0) {
           throw new NotFoundException('System does not exist any booking');
         }
-        return bookings;
+        const cars = await this.carService.getCars();
+        const response = [];
+        bookings.forEach((booking) => {
+          const car = cars.find(
+            (car) => car.licensePlate === booking.licensePlate,
+          );
+          response.push({ ...booking, car });
+        });
+        return response;
       } else if (user.role === RoleEnum.USER) {
         const bookings = await this.bookingsRepository.find({
           where: {
@@ -82,7 +91,15 @@ export class BookingService {
         if (!bookings || bookings.length === 0) {
           throw new NotFoundException('User does not have any booking');
         }
-        return bookings;
+        const cars = await this.carService.getCars();
+        const response = [];
+        bookings.forEach((booking) => {
+          const car = cars.find(
+            (car) => car.licensePlate === booking.licensePlate,
+          );
+          response.push({ ...booking, car });
+        });
+        return response;
       } else {
         throw new BadRequestException('User Role is not available');
       }
