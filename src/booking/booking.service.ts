@@ -108,8 +108,15 @@ export class BookingService {
     }
   }
 
-  async cancelBookingStatus(user: User, booking_id: string): Promise<Booking> {
+  async cancelBookingStatus(
+    user: User,
+    booking_id: string,
+    cancelNote: string,
+  ): Promise<Booking> {
     try {
+      if (!booking_id || !cancelNote) {
+        throw new BadRequestException('All fields are required');
+      }
       const booking = await this.bookingsRepository.findOneBy({
         _id: new ObjectId(booking_id),
       });
@@ -122,6 +129,7 @@ export class BookingService {
         );
       }
       booking.status = BookingStatusEnum.CANCELED;
+      booking.cancelNote = cancelNote;
       await this.bookingsRepository.save(booking);
 
       const createSlotDto = new CreateSlotDto();

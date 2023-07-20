@@ -101,7 +101,12 @@ export class BookingController {
   cancelBookingStatus(
     @GetUser() user: User,
     @Body('booking_id') booking_id: string,
+    @Body('cancelNote') cancelNote: string,
   ): Promise<Booking> {
-    return this.bookingService.cancelBookingStatus(user, booking_id);
+    return this.bookingService.cancelBookingStatus(
+      user,
+      booking_id,
+      cancelNote,
+    );
   }
 }

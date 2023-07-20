@@ -71,6 +71,14 @@ export class Booking {
   note: string;
 
   @ApiProperty({
+    description: 'Cancel note',
+    example: 'Bận việc đột xuất',
+    nullable: true,
+  })
+  @Column({ nullable: true })
+  cancelNote: string;
+
+  @ApiProperty({
     description: 'Booking Status',
     example: 'Pending',
     nullable: true,
