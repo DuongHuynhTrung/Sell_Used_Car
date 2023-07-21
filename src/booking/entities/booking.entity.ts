@@ -2,8 +2,7 @@ import { ObjectId } from 'mongodb';
 import { SlotEnum } from 'src/slot/enum/slot.enum';
 import { BookingStatusEnum } from '../enum/booking-status.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, ObjectIdColumn, OneToOne } from 'typeorm';
-import { Car } from 'src/car/entities/car.entity';
+import { Column, Entity, ObjectIdColumn } from 'typeorm';
 
 @Entity()
 export class Booking {

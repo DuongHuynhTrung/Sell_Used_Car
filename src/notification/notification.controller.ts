@@ -1,5 +1,13 @@
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { Controller, Get, Patch, UseGuards, Body, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  UseGuards,
+  Body,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/user/entities/user.entity';
@@ -98,7 +106,7 @@ export class NotificationController {
   @ApiInternalServerErrorResponse({
     description: 'Internal server error.',
   })
-  @Patch('all')
+  @Put('all')
   updateAllNotificationOfUser(@GetUser() user: User): Promise<Notification[]> {
     return this.notificationService.updateAllNotification(user);
   }
