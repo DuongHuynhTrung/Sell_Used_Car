@@ -93,6 +93,7 @@ export class NotificationService {
       notifications.forEach(
         (notification) => (notification.newNotification = false),
       );
+      await this.notificationRepository.save(notifications);
       return notifications;
     } catch (error) {
       throw new InternalServerErrorException(error.message);

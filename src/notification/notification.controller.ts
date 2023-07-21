@@ -106,7 +106,7 @@ export class NotificationController {
   @ApiInternalServerErrorResponse({
     description: 'Internal server error.',
   })
-  @Put('all')
+  @Patch('all')
   updateAllNotificationOfUser(@GetUser() user: User): Promise<Notification[]> {
     return this.notificationService.updateAllNotification(user);
   }
